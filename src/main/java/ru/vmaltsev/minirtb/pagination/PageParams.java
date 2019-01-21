@@ -6,6 +6,7 @@ import lombok.Getter;
 public class PageParams {
     private static final Long DEFAULT_PAGE = 1L;
     private static final Long DEFAULT_SIZE = 10L;
+
     private Long page;
     private Long size;
 

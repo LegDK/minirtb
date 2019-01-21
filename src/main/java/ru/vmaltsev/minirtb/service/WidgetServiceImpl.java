@@ -19,17 +19,16 @@ public class WidgetServiceImpl implements WidgetService {
 
     private final WidgetRepo widgetRepo;
 
+    private AtomicLong id = new AtomicLong();
+
     @Autowired
     public WidgetServiceImpl(WidgetRepo widgetRepo) {
         this.widgetRepo = widgetRepo;
     }
 
-    private AtomicLong id = new AtomicLong();
-
     @Override
     public Widget add(Widget widget) {
         Long newId = id.getAndIncrement();
-        ;
         widget.setId(newId);
         if (widget.getZIndex() == null) {
             widget.setZIndex(getMaxZIndex());
@@ -42,7 +41,8 @@ public class WidgetServiceImpl implements WidgetService {
     @Override
     public List<Widget> getAll() {
         return widgetRepo.getAll().stream()
-                .sorted(Comparator.comparingLong(Widget::getZIndex)).collect(Collectors.toList());
+                .sorted(Comparator.comparingLong(Widget::getZIndex))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -63,24 +63,17 @@ public class WidgetServiceImpl implements WidgetService {
     //усложнение 1
     @Override
     public Page<Widget> getPage(PageParams pageParams) {
-        List<Widget> list = new ArrayList<>(getAll());
-        List<Widget> newList = new ArrayList<>();
+        Long pageIndex = pageParams.getPage() - 1 < 0 ? 0 : pageParams.getPage() - 1;
 
-        Long start = (pageParams.getPage() - 1) * pageParams.getSize();
-        Long end = pageParams.getPage() * pageParams.getSize();
-        if (start < 0) {
-            start = 0L;
-        }
-        if (end > list.size()) {
-            end = (long) list.size();
-        }
-        for (Long i = start; i < end; i++) {
-            newList.add(list.get(Math.toIntExact(i)));
-        }
-        return new Page<>(newList,
-                (long) Math.ceil((double) widgetRepo.getAll().size() / (double) pageParams.getSize()),
+        Long start = pageIndex * pageParams.getSize();
+
+        return new Page<>(getAll().stream()
+                .skip(start)
+                .limit(pageParams.getSize())
+                .collect(Collectors.toList()),
+                pageParams.getSize(),
                 (long) widgetRepo.getAll().size(),
-                pageParams.getPage(),
+                pageIndex + 1,
                 pageParams.getSize());
     }
 

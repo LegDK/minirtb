@@ -8,11 +8,8 @@ public class RangeParams {
     private static final Double DEFAULT_RANGE_PARAM = 0.0;
 
     private Double x1;
-
     private Double y1;
-
     private Double x2;
-
     private Double y2;
 
     public RangeParams(Double x1, Double y1, Double x2, Double y2) {
