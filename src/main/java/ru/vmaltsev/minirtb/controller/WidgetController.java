@@ -3,6 +3,7 @@ package ru.vmaltsev.minirtb.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.vmaltsev.minirtb.model.Widget;
+import ru.vmaltsev.minirtb.pagination.Page;
 import ru.vmaltsev.minirtb.pagination.PageParams;
 import ru.vmaltsev.minirtb.range.RangeParams;
 import ru.vmaltsev.minirtb.service.WidgetService;
@@ -32,7 +33,7 @@ public class WidgetController {
 
     //усложнение 1
     @GetMapping("/getPage")
-    public List<Widget> getPage(PageParams pageParams) {
+    public Page<Widget> getPage(PageParams pageParams) {
         return widgetService.getPage(pageParams);
     }
 

@@ -211,19 +211,19 @@ public class WidgetServiceImplTest {
 
         PageParams pageParams = new PageParams(1L, 100L);
 
-        assertEquals(widgetService.getPage(pageParams).size(), 100);
+        assertEquals(100, (long) widgetService.getPage(pageParams).getElems().size());
 
         pageParams = new PageParams(2L, 999L);
 
-        assertEquals(widgetService.getPage(pageParams).size(), 499);
+        assertEquals(499, (long) widgetService.getPage(pageParams).getElems().size());
 
         pageParams = new PageParams(1L, 999L);
 
-        assertEquals(widgetService.getPage(pageParams).size(), 500);
+        assertEquals(500, (long) widgetService.getPage(pageParams).getElems().size());
 
         pageParams = new PageParams(null, null);
 
-        assertEquals(widgetService.getPage(pageParams).size(), 10);
+        assertEquals( 10, (long) widgetService.getPage(pageParams).getElems().size());
 
     }
 

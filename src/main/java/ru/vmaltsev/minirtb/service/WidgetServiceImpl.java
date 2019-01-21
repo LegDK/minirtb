@@ -3,6 +3,7 @@ package ru.vmaltsev.minirtb.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.vmaltsev.minirtb.model.Widget;
+import ru.vmaltsev.minirtb.pagination.Page;
 import ru.vmaltsev.minirtb.pagination.PageParams;
 import ru.vmaltsev.minirtb.range.RangeParams;
 import ru.vmaltsev.minirtb.repo.WidgetRepo;
@@ -27,7 +28,8 @@ public class WidgetServiceImpl implements WidgetService {
 
     @Override
     public Widget add(Widget widget) {
-        Long newId = createId();
+        Long newId = id.getAndIncrement();
+        ;
         widget.setId(newId);
         if (widget.getZIndex() == null) {
             widget.setZIndex(getMaxZIndex());
@@ -60,12 +62,12 @@ public class WidgetServiceImpl implements WidgetService {
 
     //усложнение 1
     @Override
-    public List<Widget> getPage(PageParams pageParams) {
+    public Page<Widget> getPage(PageParams pageParams) {
         List<Widget> list = new ArrayList<>(getAll());
         List<Widget> newList = new ArrayList<>();
 
         Long start = (pageParams.getPage() - 1) * pageParams.getSize();
-        Long end = pageParams.getPage()*pageParams.getSize();
+        Long end = pageParams.getPage() * pageParams.getSize();
         if (start < 0) {
             start = 0L;
         }
@@ -75,8 +77,13 @@ public class WidgetServiceImpl implements WidgetService {
         for (Long i = start; i < end; i++) {
             newList.add(list.get(Math.toIntExact(i)));
         }
-        return newList;
+        return new Page<>(newList,
+                (long) Math.ceil((double) widgetRepo.getAll().size() / (double) pageParams.getSize()),
+                (long) widgetRepo.getAll().size(),
+                pageParams.getPage(),
+                pageParams.getSize());
     }
+
     //усложнение 2
     @Override
     public List<Widget> getByRange(RangeParams rangeParams) {
@@ -87,15 +94,11 @@ public class WidgetServiceImpl implements WidgetService {
             Double y1 = widget.getY() - (widget.getHeight() / 2);
             Double y2 = widget.getY() + (widget.getHeight() / 2);
             if (rangeParams.getX1() <= x1 && rangeParams.getX2() >= x2
-                    && rangeParams.getY1() <= y1 && rangeParams.getY2() >=y2) {
+                    && rangeParams.getY1() <= y1 && rangeParams.getY2() >= y2) {
                 newList.add(widget);
             }
         });
         return newList;
-    }
-
-    private Long createId() {
-        return id.getAndIncrement();
     }
 
     private Long getMaxZIndex() {

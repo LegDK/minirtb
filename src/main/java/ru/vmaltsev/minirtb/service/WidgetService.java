@@ -1,6 +1,7 @@
 package ru.vmaltsev.minirtb.service;
 
 import ru.vmaltsev.minirtb.model.Widget;
+import ru.vmaltsev.minirtb.pagination.Page;
 import ru.vmaltsev.minirtb.pagination.PageParams;
 import ru.vmaltsev.minirtb.range.RangeParams;
 
@@ -18,7 +19,7 @@ public interface WidgetService {
 
     Widget update(Widget widget);
 
-    List<Widget> getPage(PageParams pageParams);
+    Page<Widget> getPage(PageParams pageParams);
 
     List<Widget> getByRange(RangeParams rangeParams);
 
