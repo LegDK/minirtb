@@ -17,9 +17,9 @@ public class Page<T> {
 
     private Long currentSize;
 
-    public Page(List<T> elems, Long totalPages, Long totalSize, Long currentPage, Long currentSize) {
+    public Page(List<T> elems, Long totalPagesBySize, Long totalSize, Long currentPage, Long currentSize) {
         this.elems = elems;
-        this.totalPages = (long) Math.ceil((double) totalSize / (double) totalPages);
+        this.totalPages = (long) Math.ceil((double) totalSize / (double) totalPagesBySize);
         this.totalSize = totalSize;
         this.currentPage = currentPage;
         this.currentSize = currentSize;
