@@ -8,7 +8,6 @@ import ru.vmaltsev.minirtb.pagination.PageParams;
 import ru.vmaltsev.minirtb.range.RangeParams;
 import ru.vmaltsev.minirtb.repo.WidgetRepo;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
@@ -80,18 +79,12 @@ public class WidgetServiceImpl implements WidgetService {
     //усложнение 2
     @Override
     public List<Widget> getByRange(RangeParams rangeParams) {
-        List<Widget> newList = new ArrayList<>();
-        widgetRepo.getAll().forEach(widget -> {
-            Double x1 = widget.getX() - (widget.getWidth() / 2);
-            Double x2 = widget.getX() + (widget.getWidth() / 2);
-            Double y1 = widget.getY() - (widget.getHeight() / 2);
-            Double y2 = widget.getY() + (widget.getHeight() / 2);
-            if (rangeParams.getX1() <= x1 && rangeParams.getX2() >= x2
-                    && rangeParams.getY1() <= y1 && rangeParams.getY2() >= y2) {
-                newList.add(widget);
-            }
-        });
-        return newList;
+        return getAll().stream().filter(widget ->
+                        (rangeParams.getX1() <= widget.getX() - (widget.getWidth() / 2)) &&
+                        (rangeParams.getX2() >= widget.getX() + (widget.getWidth() / 2)) &&
+                        (rangeParams.getY1() <= widget.getY() - (widget.getHeight() / 2)) &&
+                        (rangeParams.getY2() >= widget.getY() + (widget.getHeight() / 2))
+        ).collect(Collectors.toList());
     }
 
     private Long getMaxZIndex() {
